@@ -1,4 +1,4 @@
-export const BLOG_TITLE = 'MDX Blog';
+export const BLOG_TITLE = 'MDX Demo Blog';
 
 export const LIGHT_COLORS = {
   '--color-text': 'hsl(0deg 0% 5%)',
