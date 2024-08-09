@@ -8,6 +8,7 @@ import styles from './Logo.module.css';
 function Logo({ mobileAlignment = 'left' }) {
   return (
     <Link
+      prefetch={true}
       href="/"
       className={styles.wrapper}
       data-mobile-alignment={mobileAlignment}
