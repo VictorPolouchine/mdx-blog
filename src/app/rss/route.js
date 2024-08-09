@@ -11,15 +11,15 @@ export async function GET(request) {
         const feed = new RSS({
             title: BLOG_TITLE,
         description: 'A blog about web dev',
-        feed_url: path.join(host, '/rss.xml'),
-        site_url: host,
+        feed_url: `https://${host}/rss`,
+        site_url: `https://${host}`,
         })
         for (const post of postsList) {
             const postData = await loadBlogPost(post.slug)
             feed.item({
                 title: postData.frontmatter.title,
                 description: postData.frontmatter.description,
-                url: path.join(host, post.slug),
+                url: `https://${host}/${post.slug}`,
                 date: postData.frontmatter.publishedOn,  
             })
         }
