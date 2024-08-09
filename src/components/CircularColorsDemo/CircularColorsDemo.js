@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import clsx from 'clsx';
 import {
@@ -5,6 +6,8 @@ import {
   Pause,
   RotateCcw,
 } from 'react-feather';
+
+import {LayoutGroup, motion} from "framer-motion"
 
 import Card from '@/components/Card';
 import VisuallyHidden from '@/components/VisuallyHidden';
@@ -18,12 +21,35 @@ const COLORS = [
 ];
 
 function CircularColorsDemo() {
-  // TODO: This value should increase by 1 every second:
-  const timeElapsed = 0;
+  const [timeElapsed, setTimeElapsed] = React.useState(0)
+  const interval = React.useRef()
+  const [isRunning, setIsRunning] = React.useState(false)
+  const [selectedColor, setSelectedColor] = React.useState(COLORS[0])
+  
+  function getColor(time) {
+    const colorIndex = time % COLORS.length;
+    console.log(time)
+    console.log(COLORS[colorIndex])
+    return COLORS[colorIndex]
+  }
 
-  // TODO: This value should cycle through the colors in the
-  // COLORS array:
-  const selectedColor = COLORS[0];
+  React.useEffect(() => {
+    console.log("IS RUNNING", isRunning)
+    if (isRunning) {
+      interval.current = setInterval(() => {
+        setTimeElapsed(prevState => {
+          const newTimeElapsed = prevState + 1;
+          setSelectedColor(getColor(newTimeElapsed));
+          return newTimeElapsed;
+        });
+      }, 1000)
+    }
+    return () => {
+      clearInterval(interval.current)
+    }
+  }, [isRunning])
+
+  const widgetId = React.useId()
 
   return (
     <Card as="section" className={styles.wrapper}>
@@ -38,7 +64,14 @@ function CircularColorsDemo() {
               key={index}
             >
               {isSelected && (
-                <div
+                <motion.div
+                layout="position"
+                layoutId={widgetId}
+                transition={{
+                  type: "spring",
+                  stiffness: 250,
+                  damping: 30
+                }}
                   className={
                     styles.selectedColorOutline
                   }
@@ -69,11 +102,18 @@ function CircularColorsDemo() {
           <dd>{timeElapsed}</dd>
         </dl>
         <div className={styles.actions}>
-          <button>
-            <Play />
+          <button onClick={() => {
+            setIsRunning(prevState => !prevState)
+
+          }}>
+            {isRunning ? <Pause/> : <Play />}
             <VisuallyHidden>Play</VisuallyHidden>
           </button>
-          <button>
+          <button onClick={() => {
+            setIsRunning(false)
+            setSelectedColor(COLORS[0])
+            setTimeElapsed(0)
+          }}>
             <RotateCcw />
             <VisuallyHidden>Reset</VisuallyHidden>
           </button>

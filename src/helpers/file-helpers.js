@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
+import { notFound } from 'next/navigation'
 
 export async function getBlogPostList() {
   const fileNames = await readDirectory('/content');
@@ -26,14 +27,17 @@ export async function getBlogPostList() {
 }
 
 export async function loadBlogPost(slug) {
-  const rawContent = await readFile(
+  try {const rawContent = await readFile(
     `/content/${slug}.mdx`
   );
 
   const { data: frontmatter, content } =
     matter(rawContent);
 
-  return { frontmatter, content };
+  return { frontmatter, content };}
+  catch(error) {
+    notFound()
+  }
 }
 
 function readFile(localPath) {
